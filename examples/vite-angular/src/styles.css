@@ -1,0 +1,104 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+  --primary: #dd0031;
+  --bg: #1a0f1a;
+  --cell-bg: #2a1a2a;
+  --text: #f0e6f0;
+  --text-muted: #c4a8c4;
+  --header-bg: #150d15;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+bit-grid {
+  --grid-primary: var(--primary);
+  --grid-bg: var(--bg);
+  --grid-cell-bg: var(--cell-bg);
+  --grid-text: var(--text);
+  --grid-text-muted: var(--text-muted);
+  --grid-header-bg: var(--header-bg);
+  --grid-hover-bg: var(--cell-bg);
+  --grid-selection-bg: rgba(221, 0, 49, 0.25);
+  --grid-selection-active-bg: rgba(221, 0, 49, 0.7);
+}
+
+body {
+  margin: 0;
+  display: grid;
+  place-items: start center;
+  min-height: 100vh;
+  background-color: var(--cell-bg);
+  color: var(--text);
+}
+
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--header-bg);
+  color: var(--text);
+  width: 100%;
+  text-align: center;
+}
+
+.hdr .logos {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.hdr .logo {
+  width: 48px;
+  height: 48px;
+}
+
+.hdr .framework-logo {
+  width: 48px;
+  height: 48px;
+  opacity: 0.8;
+}
+
+.hdr .title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 50px currentColor;
+  color: var(--primary);
+}
+
+.hdr .subtitle {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.hdr .description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.hdr .github a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.hdr .github a:hover {
+  text-decoration: underline;
+}
+
+.hint {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}

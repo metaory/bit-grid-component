@@ -1,0 +1,198 @@
+---
+// biome-ignore lint: astro:components is a valid Astro import
+// @ts-ignore - astro:components is a valid Astro import
+// biome-ignore lint/correctness/noUnusedImports: Code component is used in template
+import { Code } from 'astro:components';
+---
+
+<section class="usage-section">
+  <h2>Usage</h2>
+  
+  <div class="usage-grid">
+    <article class="usage-item">
+      <header>
+        <iconify-icon width="40" icon="mdi:code-braces"></iconify-icon>
+        <h3>Constructor</h3>
+      </header>
+      <Code theme="houston" code={`import 'bit-grid-component'
+
+// Create grid with initial data and labels
+const grid = new BitGrid({
+  data: Array(7).fill(null).map(() => Array(24).fill(false)),
+  rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  colLabels: Array.from({length: 24}, (_, i) => \`\${i}:00\`),
+  onChange: (data) => console.log('Data changed:', data)
+});
+
+// IMPORTANT:
+// Must append to DOM
+document.body.appendChild(grid);
+
+// Listen for changes
+grid.addEventListener('dataChange', (e) => {
+  console.log('Data changed:', e.detail);
+});`} lang="javascript" />
+    </article>
+
+    <article class="usage-item">
+      <header>
+        <iconify-icon width="40" icon="mdi:code-braces"></iconify-icon>
+        <h3>Declarative HTML</h3>
+      </header>
+      <Code theme="houston" code={`<!-- Declarative -->
+<bit-grid></bit-grid>
+
+<script>
+  const grid = document.querySelector('bit-grid');
+  grid.update({
+    data: Array(31).fill(null).map(() => Array(24).fill(false)),
+    rowLabels: Array.from({length: 31}, (_, i) => 'Day ' + (i + 1)),
+    colLabels: Array.from({length: 24}, (_, i) => i + 'h')
+  });
+
+  // Listen for changes
+  grid.addEventListener('dataChange', (e) => {
+    console.log('Data changed:', e.detail);
+  });
+</script>`} lang="html" />
+    </article>
+
+    <article class="usage-item">
+      <header>
+        <iconify-icon width="40" icon="mdi:language-html5"></iconify-icon>
+        <h3>Imperative</h3>
+      </header>
+      <Code theme="houston" code={`<div id="grid-container"></div>
+
+<script type="module">
+  import 'bit-grid-component'
+  import BitGrid from 'bit-grid-component'
+  const grid = new BitGrid()
+  document.getElementById('grid-container').appendChild(grid)
+</script>`} lang="html" />
+    </article>
+
+    <article class="usage-item">
+      <header>
+        <iconify-icon width="40" icon="mdi:api"></iconify-icon>
+        <h3>API</h3>
+      </header>
+      <Code theme="houston" code={`import 'bit-grid-component'
+
+// Create and mount grid
+const grid = new BitGrid();
+document.getElementById('container').appendChild(grid);
+
+// Get grid data
+const data = grid.getData();
+
+// Update data and labels
+grid.update({
+  data: booleanArray,
+  rowLabels: ['Row 1', 'Row 2', ...],
+  colLabels: ['Col 1', 'Col 2', ...]
+});
+
+// Reset to empty grid
+grid.reset();
+
+// Reset to empty grid
+grid.reset();`} lang="javascript" />
+    </article>
+
+    <article class="usage-item">
+      <header>
+        <iconify-icon width="40" icon="mdi:palette"></iconify-icon>
+        <h3>CSS Vars</h3>
+      </header>
+      <Code theme="houston" code={`bit-grid {
+  --grid-primary: #3b82f6;
+  --grid-bg: #ffffff;
+  --grid-cell-bg: #f8fafc;
+  --grid-text: #1f2937;
+  --grid-text-muted: #64748b;
+  --grid-header-bg: #f1f5f9;
+  --grid-hover-bg: #e2e8f0;
+  --grid-cell-size: 28px;
+  --grid-header-width: 80px;
+  --grid-cell-spacing: 4px;
+  --grid-selection-bg: rgba(59, 130, 246, 0.25);
+  --grid-selection-active-bg: rgba(59, 130, 246, 0.7);
+  --grid-cell-radius: 8px;
+  --grid-radius: 12px;
+}`} lang="css" />
+    </article>
+  </div>
+</section>
+
+<style>
+.usage-section {
+  padding: 2em;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+h2 {
+  margin-bottom: .6em;
+  color: var(--accent-secondary)
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 700px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  width: 100%;
+  overflow-x: hidden;
+  justify-items: center;
+}
+
+.usage-item {
+  display: flex;
+  width: 100%;
+  max-width: 700px;
+  flex-direction: column;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  background: var(--surface-secondary);
+  border-radius: 22px;
+  backdrop-filter: blur(8px);
+  overflow-x: hidden;
+  outline: 12px solid var(--surface-tertiary);
+  outline-offset: -12px;
+}
+
+.usage-item header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.usage-item header iconify-icon {
+  width: 36px;
+  height: 50px;
+  color: var(--accent-primary);
+}
+
+.usage-item h3 {
+  font-family: Bungee, monospace;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 9px solid var(--surface-primary);
+}
+
+pre.astro-code {
+  background: transparent !important;
+}
+
+@media (max-width: 768px) {
+  .usage-section {
+    padding: 1em;
+  }
+  
+  .usage-item {
+    padding: 1rem;
+  }
+}
+</style>

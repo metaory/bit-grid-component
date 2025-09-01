@@ -1,0 +1,25 @@
+---
+import Header from '../components/Header.astro';
+import MobileWarning from '../components/MobileWarning.astro';
+import Usage from '../components/Usage.astro';
+import BitGridDemo from '../components/BitGridDemo.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <Header />
+  <MobileWarning />
+  <div class="page-wrapper">
+    <BitGridDemo />
+    <Usage />
+  </div>
+</Layout>
+
+<style>
+  .page-wrapper {
+    width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+    padding: 20px;
+  }
+</style>

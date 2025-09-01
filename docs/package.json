@@ -1,0 +1,19 @@
+{
+  "name": "docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource/baloo-2": "^5.2.6",
+    "@fontsource/bungee": "^5.2.6",
+    "@fontsource/bungee-shade": "^5.2.6",
+    "astro": "^5.13.4",
+    "bit-grid-component": "^0.2.0",
+    "iconify-icon": "^3.0.0"
+  }
+}

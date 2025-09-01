@@ -1,0 +1,92 @@
+---
+import '@fontsource/bungee-shade';
+import '@fontsource/bungee';
+import '@fontsource/baloo-2';
+
+declare const __APP_VERSION__: string;
+---
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+		<link rel="icon" type="image/png" href="/bit-grid-component/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<script>import 'iconify-icon';</script>
+
+		<!-- Primary Meta Tags -->
+		<title>BitGrid Component - Framework-agnostic Web Component for Boolean Matrices</title>
+		<meta name="title" content="BitGrid Component - Framework-agnostic Web Component for Boolean Matrices" />
+		<meta name="description" content="Framework-agnostic web component for boolean matrices - edit and display 2D boolean arrays with interactive cell selection." />
+		<meta name="keywords" content="web component, data grid, boolean matrices, 2D arrays, interactive selection, vanilla js" />
+		<meta name="author" content="metaory" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://github.com/metaory/bit-grid-component" />
+		<meta property="og:title" content="BitGrid Component - Framework-agnostic Web Component for Boolean Matrices" />
+		<meta property="og:description" content="Framework-agnostic web component for boolean matrices - edit and display 2D boolean arrays with interactive cell selection." />
+    <meta property="og:image" content="https://metaory.github.io/bit-grid-component/screenshot.png">
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content="https://github.com/metaory/bit-grid-component" />
+		<meta property="twitter:title" content="BitGrid Component - Framework-agnostic Web Component for Boolean Matrices" />
+		<meta property="twitter:description" content="Framework-agnostic web component for boolean matrices - edit and display 2D boolean arrays with interactive cell selection." />
+		    <meta property="twitter:image" content="https://metaory.github.io/bit-grid-component/screenshot.png" />
+
+		<!-- Additional Meta Tags -->
+		<meta name="robots" content="index, follow" />
+		<meta name="theme-color" content="#11ffaa" />
+		<link rel="canonical" href="https://github.com/metaory/bit-grid-component" />
+	</head>
+	<body>
+		<slot />
+		<div class="version-badge">v{__APP_VERSION__}</div>
+	</body>
+  <style is:global>
+    @import '../styles/theme.css';
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      font-family: "Baloo 2", Roboto, sans-serif;
+    }
+
+    body {
+      font-family: "Baloo 2", Roboto, sans-serif;
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ensure bit-grid component handles overflow properly */
+    bit-grid {
+      width: 100%;
+      display: block;
+    }
+
+    .version-badge {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+      backdrop-filter: blur(10px);
+      color: var(--accent-secondary);
+      mix-blend-mode: hard-light;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 2000;
+      opacity: .9;
+    }
+  </style>
+</html>
+

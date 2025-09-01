@@ -1,0 +1,42 @@
+{
+  "name": "bit-grid-component",
+  "version": "0.2.0",
+  "description": "Framework-agnostic web component for boolean matrices - edit and display 2D boolean arrays with interactive cell selection",
+  "type": "module",
+  "main": "BitGrid.js",
+  "exports": {
+    ".": "./BitGrid.js"
+  },
+  "files": [
+    "BitGrid.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "cd docs && npm run dev -- --host",
+    "docs:dev": "cd docs && npm run dev",
+    "docs:build": "cd docs && npm run build"
+  },
+  "keywords": [
+    "web-component",
+    "bit-grid",
+    "boolean-grid",
+    "interactive-grid",
+    "drag-selection",
+    "framework-agnostic",
+    "vanilla-js",
+    "css-variables",
+    "accessible",
+    "responsive"
+  ],
+  "author": "Metaory",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metaory/bit-grid-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/metaory/bit-grid-component/issues"
+  },
+  "homepage": "https://github.com/metaory/bit-grid-component#readme"
+}

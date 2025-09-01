@@ -1,0 +1,398 @@
+---
+// BitGrid Demo Component
+---
+
+<div class="demos-container">
+  <section class="demo-section">
+    <h3>Weekly Working Hours</h3>
+    <p>5 working days  9 working hours (9AM-5PM)</p>
+    <div id="hours-grid-placeholder"></div>
+    <div id="hours-status">Click and drag to toggle cells. Each cell represents one working hour.</div>
+  </section>
+
+  <section class="demo-section">
+    <h3>Skill Matrix</h3>
+    <p>6 team members 8 core skills</p>
+    <div id="skills-grid-placeholder"></div>
+    <div id="skills-status">Click and drag to toggle cells. Each cell represents a skill level.</div>
+  </section>
+</div>
+
+<div class="controls-panel">
+  <iconify-icon class="panel-handle" icon="mdi:palette" width="32" height="32"></iconify-icon>
+  <div class="controls">
+    <button id="reset-all-btn">
+      <iconify-icon icon="material-symbols:reset-iso-rounded" width="40"></iconify-icon>
+    </button>
+    <button id="get-all-data-btn">
+      log values
+    </button>
+    <div class="theme-section">
+      <button class="theme-btn dark active" data-theme="dark">Dark</button>
+      <button class="theme-btn light" data-theme="light">Light</button>
+      <button class="theme-btn purple" data-theme="purple">Purple</button>
+      <button class="theme-btn green" data-theme="green">Green</button>
+      <button class="theme-btn orange" data-theme="orange">Orange</button>
+      <button class="theme-btn pink" data-theme="pink">Pink</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import BitGrid from 'bit-grid-component';
+
+  const hoursGrid = new BitGrid({
+    data: Array(5).fill(null).map(() => Array(9).fill(false)),
+    rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    colLabels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM'],
+    onChange: (data) => console.log('Hours grid changed:', data)
+  });
+
+  const skillsGrid = new BitGrid({
+    data: Array(6).fill(null).map(() => Array(9).fill(false)),
+    rowLabels: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'],
+    colLabels: ['Bash', 'Go', 'JQ', 'JS', 'Lisp', 'Lua', 'Rust', 'Swift', 'Zig',],
+    onChange: (data) => console.log('Skills grid changed:', data)
+  });
+
+  const hoursPlaceholder = document.getElementById('hours-grid-placeholder');
+  const skillsPlaceholder = document.getElementById('skills-grid-placeholder');
+  if (hoursPlaceholder) hoursPlaceholder.appendChild(hoursGrid);
+  if (skillsPlaceholder) skillsPlaceholder.appendChild(skillsGrid);
+
+  const themes = {
+    dark: {
+      '--grid-primary': '#3b82f6',
+      '--grid-bg': '#1e293b',
+      '--grid-cell-bg': '#2d3748',
+      '--grid-text': '#f1f5f9',
+      '--grid-text-muted': '#94a3b8',
+      '--grid-header-bg': '#0f172a',
+      '--grid-hover-bg': '#334155',
+      '--grid-selection-bg': 'rgba(59, 130, 246, 0.25)',
+      '--grid-selection-active-bg': 'rgba(59, 130, 246, 0.7)'
+    },
+    light: {
+      '--grid-primary': '#2563eb',
+      '--grid-bg': '#ffffff',
+      '--grid-cell-bg': '#f8fafc',
+      '--grid-text': '#1f2937',
+      '--grid-text-muted': '#64748b',
+      '--grid-header-bg': '#f1f5f9',
+      '--grid-hover-bg': '#e2e8f0',
+      '--grid-selection-bg': 'rgba(37, 99, 235, 0.25)',
+      '--grid-selection-active-bg': 'rgba(37, 99, 235, 0.7)'
+    },
+    purple: {
+      '--grid-primary': '#8b5cf6',
+      '--grid-bg': '#1e1b4b',
+      '--grid-cell-bg': '#312e81',
+      '--grid-text': '#e9d5ff',
+      '--grid-text-muted': '#a78bfa',
+      '--grid-header-bg': '#0f0a23',
+      '--grid-hover-bg': '#3730a3',
+      '--grid-selection-bg': 'rgba(139, 92, 246, 0.25)',
+      '--grid-selection-active-bg': 'rgba(139, 92, 246, 0.7)'
+    },
+    green: {
+      '--grid-primary': '#10b981',
+      '--grid-bg': '#064e3b',
+      '--grid-cell-bg': '#065f46',
+      '--grid-text': '#d1fae5',
+      '--grid-text-muted': '#6ee7b7',
+      '--grid-header-bg': '#022c22',
+      '--grid-hover-bg': '#047857',
+      '--grid-selection-bg': 'rgba(16, 185, 129, 0.25)',
+      '--grid-selection-active-bg': 'rgba(16, 185, 129, 0.7)'
+    },
+    orange: {
+      '--grid-primary': '#f97316',
+      '--grid-bg': '#7c2d12',
+      '--grid-cell-bg': '#92400e',
+      '--grid-text': '#fed7aa',
+      '--grid-text-muted': '#fdba74',
+      '--grid-header-bg': '#451a03',
+      '--grid-hover-bg': '#a16207',
+      '--grid-selection-bg': 'rgba(249, 115, 22, 0.25)',
+      '--grid-selection-active-bg': 'rgba(249, 115, 22, 0.7)'
+    },
+    pink: {
+      '--grid-primary': '#ec4899',
+      '--grid-bg': '#831843',
+      '--grid-cell-bg': '#9d174d',
+      '--grid-text': '#fce7f3',
+      '--grid-text-muted': '#f9a8d4',
+      '--grid-header-bg': '#500724',
+      '--grid-hover-bg': '#be185d',
+      '--grid-selection-bg': 'rgba(236, 72, 153, 0.25)',
+      '--grid-selection-active-bg': 'rgba(236, 72, 153, 0.7)'
+    }
+  };
+
+  let currentTheme = 'dark';
+
+  function applyTheme(themeName) {
+    const themeVars = themes[themeName];
+    if (!themeVars) return;
+
+    document.body.style.setProperty('--surface-primary', themeVars['--grid-bg'])
+    document.body.style.setProperty('--surface-secondary', themeVars['--grid-header-bg'])
+    document.body.style.setProperty('--surface-tertiary', themeVars['--grid-cell-bg'])
+
+    console.log('::', { themeName, themeVars }, themeVars['--grid-bg'])
+    Object.entries(themeVars).forEach(([key, value]) => {
+      hoursGrid.style.setProperty(key, String(value));
+      skillsGrid.style.setProperty(key, String(value));
+    });
+
+    document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`.theme-btn.${themeName}`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    currentTheme = themeName;
+  }
+
+  applyTheme(currentTheme);
+
+  function countActiveCells(data) {
+    return data.flat().filter(cell => cell).length;
+  }
+
+  hoursGrid.addEventListener('dataChange', (e) => {
+    const data = (e as CustomEvent).detail;
+    const activeCells = countActiveCells(data);
+    const statusEl = document.getElementById('hours-status');
+    if (statusEl) statusEl.textContent = `Active cells: ${activeCells} | Click and drag to toggle.`;
+  });
+
+  skillsGrid.addEventListener('dataChange', (e) => {
+    const data = (e as CustomEvent).detail;
+    const activeCells = countActiveCells(data);
+    const statusEl = document.getElementById('skills-status');
+    if (statusEl) statusEl.textContent = `Active cells: ${activeCells} | Click and drag to toggle.`;
+  });
+
+  function resetAllGrids() {
+    hoursGrid.reset();
+    skillsGrid.reset();
+    const hoursStatus = document.getElementById('hours-status');
+    const skillsStatus = document.getElementById('skills-status');
+    if (hoursStatus) hoursStatus.textContent = 'Grid reset.';
+    if (skillsStatus) skillsStatus.textContent = 'Grid reset.';
+  }
+
+  function getAllData() {
+    const hoursData = hoursGrid.getData();
+    const skillsData = skillsGrid.getData();
+    
+    console.log('All grid data:', { hours: hoursData, skills: skillsData });
+    
+    const hoursActive = countActiveCells(hoursData);
+    const skillsActive = countActiveCells(skillsData);
+    
+    const hoursStatus = document.getElementById('hours-status');
+    const skillsStatus = document.getElementById('skills-status');
+
+    if (hoursStatus) hoursStatus.textContent = `Total active cells: ${hoursActive}`;
+    if (skillsStatus) skillsStatus.textContent = `Total active cells: ${skillsActive}`;
+  }
+
+  const resetBtn = document.getElementById('reset-all-btn');
+  const getDataBtn = document.getElementById('get-all-data-btn');
+  if (resetBtn) resetBtn.addEventListener('click', resetAllGrids);
+  if (getDataBtn) getDataBtn.addEventListener('click', getAllData);
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const theme = (btn as HTMLElement).dataset.theme;
+      if (theme) applyTheme(theme);
+    });
+  });
+</script>
+
+<style>
+  .demos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
+    gap: 224px;
+    width: 90vw;
+    margin: 3em;
+    padding-top: 50px;
+    justify-items: center;
+  }
+
+  .demo-section {
+    background: var(--surface-secondary);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 4px 6px var(--shadow-medium);
+    width: 100%;
+    max-width: 500px;
+    height: fit-content;
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: var(--accent-secondary);
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 20px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+  }
+
+  #hours-grid-placeholder,
+  #skills-grid-placeholder {
+    background: var(--surface-tertiary);
+    border-radius: 22px;
+    padding: 20px 50px 20px 20px ;
+    width: 100%;
+    display: block;
+    margin-bottom: 16px;
+    min-height: 200px;
+    /* overflow-x: auto; */
+    overflow-x: hidden;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-secondary) var(--surface-tertiary);
+    scrollbar-gutter: stable;
+  }
+
+  #hours-status,
+  #skills-status {
+    padding: 12px;
+    background: var(--surface-primary);
+    border-radius: 16px;
+    color: var(--accent-secondary);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .controls-panel {
+    position: fixed;
+    top: 50%;
+    right: -240px;
+    transform: translateY(-50%);
+    transition: right .4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+
+    &:hover {
+      right: 0;
+
+      .panel-handle {
+        background: var(--accent-primary);
+        color: var(--surface-primary);
+      }
+    }
+  }
+
+  .panel-handle {
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    padding-right: 20px;
+    height: 32px;
+    color: black;
+    margin: auto;
+    background: var(--accent-primary);
+    box-shadow: 0 0 30px var(--accent-primary);
+    border-radius: 12px 0 0 10px;
+    transition: all 0.2s ease;
+  }
+
+  .controls {
+    background: #22003333;
+    backdrop-filter: blur(4px);
+    border-radius: 16px 0 0 16px;
+    padding: 24px;
+    box-shadow: 4px 0 32px var(--shadow-heavy);
+    width: 240px;
+    min-height: 240px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  #reset-all-btn,
+  #get-all-data-btn {
+    margin-bottom: 20px;
+    padding: 10px; 
+    margin: auto;
+    color: var(--accent-primary);
+    &:hover {
+      color: var(--accent-primary);
+    }
+  }
+  button iconify-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .theme-section {
+    border-top: 6px dashed var(--surface-secondary);
+    padding-top: 20px;
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
+    h4 {
+      margin: 0 0 16px 0;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
+  .theme-btn {
+    padding: 6px;
+    border-radius: 8px;
+    margin-bottom: 0;
+    transition: all .1s ease;
+    box-shadow: 0 0 30px currentColor;
+
+    &.dark {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    &.light {
+      background: #ffffff;
+      color: #2563eb;
+    }
+
+    &.purple {
+      background: #1e1b4b;
+      color: #8b5cf6;
+    }
+
+    &.green {
+      background: #064e3b;
+      color: #10b981;
+    }
+
+    &.orange {
+      background: #7c2d12;
+      color: #f97316;
+    }
+
+    &.pink {
+      background: #831843;
+      color: #ec4899;
+    }
+
+    &.active {
+      transform: scale(1.1);
+      outline: solid 4px currentColor;
+    }
+  }
+
+</style>
+

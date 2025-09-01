@@ -1,0 +1,157 @@
+<div class="logo-container">
+  <div class="logo-blob"></div>
+  <img width="48" src="/bit-grid-component/favicon.png" />
+</div>
+<div class="header">
+  <h1>BitGrid Component</h1>
+  <a
+    href="https://github.com/metaory/bit-grid-component"
+    class="github-link"
+    target="_blank"
+    rel="noopener"
+  >
+    <iconify-icon icon="line-md:github-twotone" id="github-icon" width="40" height="40"></iconify-icon>
+  </a>
+</div>
+
+<style>
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 60px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  background: #22003344;
+  mix-blend-mode: difference;
+  backdrop-filter: blur(10px);
+}
+
+.logo-container {
+  position: fixed;
+  z-index: 110;
+  top: 4px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mix-blend-mode: plus-lighter;
+
+}
+
+img {
+  opacity: .8;
+}
+
+#logo {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+#logo:hover {
+  transform: scale(1.1);
+}
+
+.logo-blob {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 0;
+  background: conic-gradient(from 0deg, #009494, #b1323b, #ba482e, #69314b, #0135a8, #009494);
+  border-radius: 50%;
+  opacity: 0.9;
+  animation: blobRotate 2s linear infinite;
+  filter: blur(12px);
+  z-index: 1;
+  mix-blend-mode: inherit;
+}
+
+h1 {
+  font-family: "Bungee Shade", monospace;
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-left: 4rem;
+  user-select: none;
+  background: linear-gradient(45deg, 
+    var(--accent-secondary),
+    var(--accent-primary)
+    );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-flow 10s ease infinite;
+}
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+h1:hover {
+  filter: brightness(1.2);
+}
+
+.github-link {
+  position: fixed;
+  top: 8px;
+  right: 10px;
+  mix-blend-mode: overlay;
+}
+
+#github-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--accent-secondary);
+  transition: all 0.3s ease;
+}
+
+.github-link:hover #github-icon {
+  transform: scale(1.1);
+  color: var(--accent-primary);
+}
+
+@keyframes blobRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    margin-left: 3rem;
+    font-size: clamp(1rem, 5vw, 1.3rem);
+  }
+  
+  .logo-container {
+    left: 8px;
+  }
+  
+  #logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .logo-blob {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+:global(body) {
+  padding-top: 50px;
+}
+</style>
