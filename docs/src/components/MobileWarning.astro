@@ -1,13 +1,16 @@
 <div id="mobile-warning" class="mobile-warning hidden">
-  <iconify-icon icon="mdi:desktop-classic"></iconify-icon>
+  <div>
+    <iconify-icon width="98" icon="tabler:device-mobile-off"></iconify-icon>
+    <iconify-icon width="128" icon="basil:desktop-outline"></iconify-icon>
+  </div>
   <h3>Desktop Optimized</h3>
-  <p>Best experienced with mouse and keyboard</p>
+  <p>Best experienced with mouse</p>
   <button onclick="this.parentElement.classList.add('hidden')">Got it</button>
 </div>
 
 <script is:inline>
   if ('ontouchstart' in window) {
-    // document.getElementById('mobile-warning')?.classList.remove('hidden');
+    document.getElementById('mobile-warning')?.classList.remove('hidden');
   }
 </script>
 
@@ -15,7 +18,7 @@
   .mobile-warning {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(10, 30, 40, 0.6);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,28 +30,39 @@
     gap: 1.5rem;
     max-width: 100vw;
     overflow: hidden;
+    &>div {
+      display: grid;
+      grid-auto-flow: column;
+      place-items: center;
+      iconify-icon:first-of-type {
+        color: #EE0055;
+      }
+    }
   }
 
   .mobile-warning.hidden { display: none; }
 
   .mobile-warning iconify-icon {
     color: var(--accent-primary);
-    filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.6));
-    width: 48px;
-    height: 48px;
+    filter: drop-shadow(0 0 20px currentColor);
+    width: auto;
+    height: auto;
   }
 
   .mobile-warning h3 {
-    color: var(--accent-secondary);
+    color: var(--accent-primary);
     font-size: 1.5rem;
     font-weight: 600;
+    text-shadow: 0 0 30px currentColor;
     margin: 0;
   }
 
   .mobile-warning p {
-    color: var(--text-primary);
+    color: var(--accent-primary);
+    color: #55FFDD;
     font-size: 1.1rem;
     line-height: 1.4;
+    font-weight: bold;
     margin: 0;
     max-width: 300px;
   }
@@ -56,21 +70,22 @@
   .mobile-warning button {
     background: var(--accent-primary);
     color: var(--surface-primary);
+    mix-blend-mode: difference;
     border: none;
     padding: 1rem 2rem;
-    border-radius: 16px;
-    font-weight: 500;
+    border-radius: 28px;
+    font-weight: 800;
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(8px);
-    box-shadow: 0 0 40px rgba(96, 165, 250, 0.4);
+    box-shadow: 0 0 40px var(--accent-primary);
   }
 
   .mobile-warning button:hover {
     background: var(--accent-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 8px 25px currentColor;
   }
 
   @media (max-width: 768px) {
