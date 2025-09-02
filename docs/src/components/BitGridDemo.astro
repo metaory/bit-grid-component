@@ -12,7 +12,7 @@
 
   <section class="demo-section">
     <h3>Skill Matrix</h3>
-    <p>6 team members 8 core skills</p>
+    <p>8 team members 24 skills</p>
     <div id="skills-grid-placeholder"></div>
     <div id="skills-status">Click and drag to toggle cells. Each cell represents a skill level.</div>
   </section>
@@ -39,21 +39,47 @@
 </div>
 
 <script>
+  /* @ts-nocheck */
+  // @ts-ignore - resolved at runtime by docs dependencies
   import BitGrid from 'bit-grid-component';
 
   const hoursGrid = new BitGrid({
-    data: Array(5).fill(null).map(() => Array(9).fill(false)),
     rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-    colLabels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM'],
+    colLabels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM'],
     onChange: (data) => console.log('Hours grid changed:', data)
   });
 
-  const skillsGrid = new BitGrid({
-    data: Array(6).fill(null).map(() => Array(9).fill(false)),
-    rowLabels: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'],
-    colLabels: ['Bash', 'Go', 'JQ', 'JS', 'Lisp', 'Lua', 'Rust', 'Swift', 'Zig',],
-    onChange: (data) => console.log('Skills grid changed:', data)
+  const skillsGrid = new BitGrid();
+  skillsGrid.update({
+    rowLabels: [
+      'Alice',
+      'Bob',
+      'Charlie',
+      'Diana',
+      'Eve',
+      'Frank',
+      'Grace',
+    ],
+    colLabels: [
+      'Bash',
+      'C',
+      'C++',
+      'Go',
+      'JQ',
+      'JS',
+      'Lisp',
+      'Lua',
+      'Rust',
+      'Scala',
+      'Swift',
+      'Zig',
+    ]
   });
+  skillsGrid.addEventListener('dataChange', (e) => {
+    console.log('Skills grid changed:', e.detail);
+  });
+
+
 
   const hoursPlaceholder = document.getElementById('hours-grid-placeholder');
   const skillsPlaceholder = document.getElementById('skills-grid-placeholder');
@@ -159,14 +185,14 @@
   }
 
   hoursGrid.addEventListener('dataChange', (e) => {
-    const data = (e as CustomEvent).detail;
+    const data = e.detail;
     const activeCells = countActiveCells(data);
     const statusEl = document.getElementById('hours-status');
     if (statusEl) statusEl.textContent = `Active cells: ${activeCells} | Click and drag to toggle.`;
   });
 
   skillsGrid.addEventListener('dataChange', (e) => {
-    const data = (e as CustomEvent).detail;
+    const data = e.detail;
     const activeCells = countActiveCells(data);
     const statusEl = document.getElementById('skills-status');
     if (statusEl) statusEl.textContent = `Active cells: ${activeCells} | Click and drag to toggle.`;
@@ -227,7 +253,7 @@
     padding: 24px;
     box-shadow: 0 4px 6px var(--shadow-medium);
     width: 100%;
-    max-width: 500px;
+    /* max-width: 500px; */
     height: fit-content;
 
     h3 {

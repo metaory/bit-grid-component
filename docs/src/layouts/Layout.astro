@@ -57,6 +57,9 @@ declare const __APP_VERSION__: string;
       font-family: "Baloo 2", Roboto, sans-serif;
     }
 
+    html {
+      scrollbar-color: var(--border-secondary) var(--border-primary);
+    }
     body {
       font-family: "Baloo 2", Roboto, sans-serif;
       background: var(--surface-primary);
@@ -66,7 +69,6 @@ declare const __APP_VERSION__: string;
       flex-direction: column;
     }
 
-    /* Ensure bit-grid component handles overflow properly */
     bit-grid {
       width: 100%;
       display: block;

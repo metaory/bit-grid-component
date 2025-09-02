@@ -145,13 +145,18 @@ document.getElementById('container').appendChild(grid);
 
 ```javascript
 const grid = new BitGrid({
-  data: boolean[][],           // 2D boolean array (default: 5x5 grid)
-  rowLabels: string[],          // Array of row labels
-  colLabels: string[],          // Array of column labels
-  onChange: function,           // Callback for data changes
-  debounceMs: number           // Debounce delay (default: 100ms)
+  data: boolean[][],           // Optional: 2D boolean array
+  rowLabels: string[],          // Optional: Array of row labels
+  colLabels: string[],          // Optional: Array of column labels
+  onChange: function,           // Optional: Callback for data changes
+  debounceMs: number           // Optional: Debounce delay (default: 100ms)
 });
 ```
+
+**Inference Priority:**
+1. If both `rowLabels` and `colLabels` provided → data generated automatically
+2. If `data` provided → labels generated if not provided
+3. Default → 5x5 grid with auto-generated labels
 
 ### Methods
 
@@ -159,8 +164,16 @@ const grid = new BitGrid({
 // Get current data
 const data = grid.getData();
 
-// Update data and labels
+// Update data and labels (infers dimensions)
 grid.update({ data: newData, rowLabels: [...], colLabels: [...] });
+
+// Convenience methods
+grid.setLabels(['Row1', 'Row2'], ['Col1', 'Col2']);
+grid.setData(booleanArray);
+grid.setCell(row, col, true);
+grid.getCell(row, col);
+grid.toggleCell(row, col);
+grid.fill(false); // Fill all cells with value
 
 // Reset to empty grid
 grid.reset();
@@ -205,8 +218,8 @@ bit-grid {
 <script>
   const grid = document.querySelector('bit-grid');
   
+  // Just provide labels - data auto-generated
   grid.update({
-    data: Array(31).fill(null).map(() => Array(24).fill(false)),
     rowLabels: Array.from({length: 31}, (_, i) => `Day ${i + 1}`),
     colLabels: Array.from({length: 24}, (_, i) => `${i}h`)
   });
@@ -229,11 +242,16 @@ function AttendanceGrid({ data, onDataChange }) {
   
   useEffect(() => {
     if (gridRef.current) {
+      // Labels-first approach
       gridRef.current.update({
-        data: data,
         rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
         colLabels: Array.from({length: 24}, (_, i) => `${i}:00`)
       });
+      
+      // Then set data if provided
+      if (data) {
+        gridRef.current.setData(data);
+      }
       
       gridRef.current.addEventListener('dataChange', onDataChange);
     }

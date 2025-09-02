@@ -24,6 +24,9 @@ const createConfig = (options) => ({
 const createGrid = (rows, cols) =>
   Array(rows).fill(null).map(() => Array(cols).fill(false));
 
+const generateLabels = (length, prefix) =>
+  Array.from({ length }, (_, i) => `${prefix}.${i + 1}`);
+
 const getSelectionBounds = (dragStart, dragEnd) => ({
   minRow: Math.min(dragStart.row, dragEnd.row),
   maxRow: Math.max(dragStart.row, dragEnd.row),
@@ -42,13 +45,11 @@ const createElement = (tag, className, attributes = {}) => {
   const element = document.createElement(tag);
   if (className) element.className = className;
 
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (key === 'textContent') {
-      element.textContent = value;
-    } else {
-      element.setAttribute(key, value);
-    }
-  });
+  for (const key in attributes) {
+    const value = attributes[key];
+    if (key === 'textContent') element.textContent = value;
+    else element.setAttribute(key, value);
+  }
   return element;
 };
 
@@ -67,9 +68,9 @@ const createRow = (rowData, rowIndex, rowLabel) => {
   tr.appendChild(createElement('td', 'row-label', { textContent: rowLabel }));
 
   const fragment = document.createDocumentFragment();
-  rowData.forEach((cellData, i) => {
+  for (const [i, cellData] of rowData.entries()) {
     fragment.appendChild(createCell(rowIndex, i, cellData));
-  });
+  }
   tr.appendChild(fragment);
   return tr;
 };
@@ -81,12 +82,12 @@ const createHeader = (colLabels) => {
   headerRow.appendChild(createElement('th', 'corner-cell'));
 
   const fragment = document.createDocumentFragment();
-  colLabels.forEach((label, i) => {
+  for (const [i, label] of colLabels.entries()) {
     fragment.appendChild(createElement('th', 'col-label', {
       textContent: label,
       'data-col': i
     }));
-  });
+  }
   headerRow.appendChild(fragment);
 
   thead.appendChild(headerRow);
@@ -99,9 +100,9 @@ const createTable = (grid, rowLabels, colLabels) => {
 
   const tbody = createElement('tbody');
   const fragment = document.createDocumentFragment();
-  grid.forEach((rowData, i) => {
+  for (const [i, rowData] of grid.entries()) {
     fragment.appendChild(createRow(rowData, i, rowLabels[i]));
-  });
+  }
   tbody.appendChild(fragment);
 
   table.appendChild(tbody);
@@ -113,17 +114,20 @@ class BitGrid extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
 
-    const data = options.data || createGrid(5, 5);
-    this.rows = data.length;
-    this.cols = data[0].length;
+    const data = Array.isArray(options.data) && Array.isArray(options.data[0])
+      ? options.data
+      : null;
 
-    const generateLabels = (length, prefix) =>
-      Array.from({ length }, (_, i) => `${prefix} ${i + 1}`);
+    const rows = data ? data.length : (options.rowLabels?.length || 5);
+    const cols = data ? data[0].length : (options.colLabels?.length || 5);
+
+    this.rows = rows;
+    this.cols = cols;
 
     this.data = {
-      grid: data,
-      rowLabels: options.rowLabels || generateLabels(this.rows, 'Row'),
-      colLabels: options.colLabels || generateLabels(this.cols, 'Col')
+      grid: data || createGrid(rows, cols),
+      rowLabels: options.rowLabels || generateLabels(rows, 'row'),
+      colLabels: options.colLabels || generateLabels(cols, 'col')
     };
 
     this.state = createState();
@@ -133,9 +137,6 @@ class BitGrid extends HTMLElement {
     this._isInitialized = false;
     this._cellsCache = null;
     this._boundsCache = null;
-    this._headerHeight = null;
-    this._resizeObserver = null;
-    this._onWindowResize = null;
 
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -192,13 +193,13 @@ class BitGrid extends HTMLElement {
 
   adjustColumnHeaderHeight() {
     const colLabels = this.shadowRoot.querySelectorAll('.col-label');
-    const maxTextWidth = Array.from(colLabels).reduce((max, label) =>
-      Math.max(max, label.scrollWidth), 0);
+    const maxTextWidth = Array.from(colLabels).reduce((m, el) => {
+      const w = el.scrollWidth;
+      return w > m ? w : m;
+    }, 0);
 
     const headerHeight = maxTextWidth + 30;
     this.shadowRoot.querySelector('thead').style.height = `${headerHeight}px`;
-
-    this._headerHeight = headerHeight;
   }
 
   getStyles() {
@@ -382,24 +383,19 @@ class BitGrid extends HTMLElement {
       ['touchstart', this.handleTouchStart, { passive: false }]
     ];
 
-    events.forEach(([event, handler, options]) => {
+    for (let i = 0; i < events.length; i++) {
+      const [event, handler, options] = events[i];
       grid.addEventListener(event, handler, options);
-    });
+    }
 
     document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
-  observeResize() {}
-
   disconnectedCallback() {
-    if (this._resizeObserver) { this._resizeObserver.disconnect(); this._resizeObserver = null; }
-    if (this._onWindowResize) { window.removeEventListener('resize', this._onWindowResize); this._onWindowResize = null; }
     document.removeEventListener('mouseup', this.handleMouseUp);
     document.removeEventListener('keydown', this.handleKeyDown);
   }
-
-  adaptSize() {}
 
   handleMouseDown(e) {
     if (e.button !== 0) return;
@@ -482,9 +478,7 @@ class BitGrid extends HTMLElement {
 
   clearSelectionVisuals() {
     const cells = this._cellsCache || this.shadowRoot.querySelectorAll('.data-cell[data-selecting]');
-    Array.from(cells).forEach(cell => {
-      cell.removeAttribute('data-selecting');
-    });
+    for (const cell of cells) cell.removeAttribute('data-selecting');
   }
 
   getCellFromPoint(x, y) {
@@ -508,17 +502,12 @@ class BitGrid extends HTMLElement {
     const cells = table.querySelectorAll('td.data-cell');
     if (cells.length === 0) return { row: -1, col: -1 };
 
-    const foundCell = Array.from(cells).find(cell => {
-      const rect = cell.getBoundingClientRect();
-      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    const hit = Array.from(cells).find(cell => {
+      const r = cell.getBoundingClientRect();
+      return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
     });
 
-    if (foundCell) {
-      return {
-        row: parseInt(foundCell.dataset.row),
-        col: parseInt(foundCell.dataset.col)
-      };
-    }
+    if (hit) return { row: parseInt(hit.dataset.row), col: parseInt(hit.dataset.col) };
 
     return { row: -1, col: -1 };
   }
@@ -536,31 +525,22 @@ class BitGrid extends HTMLElement {
   }
 
   updateCellStates() {
-    if (!this._cellsCache) {
-      this._cellsCache = this.shadowRoot.querySelectorAll('.data-cell');
-    }
+    if (!this._cellsCache) this._cellsCache = this.shadowRoot.querySelectorAll('.data-cell');
     const cells = this._cellsCache;
 
-    Array.from(cells).forEach(cell => {
+    for (const cell of cells) {
       const row = cell.dataset.row | 0;
       const col = cell.dataset.col | 0;
       const isActive = this.data.grid[row][col];
-
       const hasActive = cell.hasAttribute('data-active');
-      if (isActive !== hasActive) {
-        if (isActive) {
-          cell.setAttribute('data-active', '');
-        } else {
-          cell.removeAttribute('data-active');
-        }
-      }
-    });
+      if (isActive === hasActive) continue;
+      if (isActive) { cell.setAttribute('data-active', ''); continue; }
+      cell.removeAttribute('data-active');
+    }
   }
 
   updateSelection() {
-    if (!this._cellsCache) {
-      this._cellsCache = this.shadowRoot.querySelectorAll('.data-cell');
-    }
+    if (!this._cellsCache) this._cellsCache = this.shadowRoot.querySelectorAll('.data-cell');
     const cells = this._cellsCache;
 
     const boundsKey = `${this.state.dragStart?.row},${this.state.dragStart?.col}-${this.state.dragEnd?.row},${this.state.dragEnd?.col}`;
@@ -572,20 +552,15 @@ class BitGrid extends HTMLElement {
     }
     const bounds = this._boundsCache.bounds;
 
-    Array.from(cells).forEach(cell => {
+    for (const cell of cells) {
       const row = cell.dataset.row | 0;
       const col = cell.dataset.col | 0;
       const shouldBeSelecting = isInSelection(row, col, bounds);
-      const isCurrentlySelecting = cell.hasAttribute('data-selecting');
-
-      if (shouldBeSelecting !== isCurrentlySelecting) {
-        if (isCurrentlySelecting) {
-          cell.removeAttribute('data-selecting');
-        } else {
-          cell.setAttribute('data-selecting', '');
-        }
-      }
-    });
+      const isSelecting = cell.hasAttribute('data-selecting');
+      if (shouldBeSelecting === isSelecting) continue;
+      if (isSelecting) { cell.removeAttribute('data-selecting'); continue; }
+      cell.setAttribute('data-selecting', '');
+    }
   }
 
   dispatchChangeEvent() {
@@ -600,38 +575,92 @@ class BitGrid extends HTMLElement {
     return this.data.grid;
   }
 
-  update(newOptions) {
-    if (newOptions.data) {
-      if (!Array.isArray(newOptions.data) || !Array.isArray(newOptions.data[0])) {
-        throw new Error('Data must be a 2D array');
-      }
+  update(newOptions = {}) {
+    const hasData = Array.isArray(newOptions.data) && Array.isArray(newOptions.data[0]);
 
-      const [newRows, newCols] = [newOptions.data.length, newOptions.data[0].length];
-      const dimensionsChanged = newRows !== this.rows || newCols !== this.cols;
-      if (dimensionsChanged) {
-        this.rows = newRows;
-        this.cols = newCols;
-      }
-      this.data.grid = newOptions.data;
+    let dimensionsChanged = false;
+    if (hasData) {
+      const data = newOptions.data;
+      const rows = data.length;
+      const cols = data[0].length;
+      dimensionsChanged = rows !== this.rows || cols !== this.cols;
+      this.rows = rows;
+      this.cols = cols;
+      this.data.grid = data;
     }
 
-    const generateLabels = (length, prefix) =>
-      Array.from({ length }, (_, i) => `${prefix} ${i + 1}`);
+    if (newOptions.rowLabels) this.data.rowLabels = newOptions.rowLabels;
+    if (newOptions.colLabels) this.data.colLabels = newOptions.colLabels;
 
-    this.data.rowLabels = newOptions.rowLabels ||
-      (newOptions.data ? generateLabels(this.rows, 'Row') : this.data.rowLabels);
-    this.data.colLabels = newOptions.colLabels ||
-      (newOptions.data ? generateLabels(this.cols, 'Col') : this.data.colLabels);
+    // Check if we need to regenerate grid based on new label dimensions
+    const newRows = this.data.rowLabels?.length || this.rows || 5;
+    const newCols = this.data.colLabels?.length || this.cols || 5;
+    
+    if (!hasData && (newRows !== this.rows || newCols !== this.cols)) {
+      this.rows = newRows;
+      this.cols = newCols;
+      this.data.grid = createGrid(newRows, newCols);
+      dimensionsChanged = true;
+    }
 
-    this.render();
-    this.adjustColumnHeaderHeight();
-    this.updateCellStates();
+    if (!this.data.rowLabels || this.data.rowLabels.length === 0) {
+      this.data.rowLabels = generateLabels(this.rows, 'row');
+    }
+    if (!this.data.colLabels || this.data.colLabels.length === 0) {
+      this.data.colLabels = generateLabels(this.cols, 'col');
+    }
+
+    if (dimensionsChanged) {
+      this.render();
+      this.adjustColumnHeaderHeight();
+    } else {
+      this.updateCellStates();
+    }
+
     this.style.setProperty('--grid-cols', `${this.cols}`);
   }
 
   reset() {
     this.data.grid = createGrid(this.rows, this.cols);
     this.updateCellStates();
+  }
+
+  // Convenience methods for common operations
+  setLabels(rowLabels, colLabels) {
+    this.update({ rowLabels, colLabels });
+  }
+
+  setData(data) {
+    this.update({ data });
+  }
+
+  setCell(row, col, value) {
+    if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+      this.data.grid[row][col] = value;
+      this.updateCellStates();
+      this.dispatchChangeEvent();
+    }
+  }
+
+  getCell(row, col) {
+    if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+      return this.data.grid[row][col];
+    }
+    return null;
+  }
+
+  toggleCell(row, col) {
+    if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+      this.data.grid[row][col] = !this.data.grid[row][col];
+      this.updateCellStates();
+      this.dispatchChangeEvent();
+    }
+  }
+
+  fill(value = false) {
+    this.data.grid = createGrid(this.rows, this.cols).map(row => row.map(() => value));
+    this.updateCellStates();
+    this.dispatchChangeEvent();
   }
 }
 

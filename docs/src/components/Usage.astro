@@ -15,6 +15,7 @@ import { Code } from 'astro:components';
         <h3>Constructor</h3>
       </header>
       <Code theme="houston" code={`import 'bit-grid-component'
+import BitGrid from 'bit-grid-component'
 
 // Create grid with initial data and labels
 const grid = new BitGrid({
@@ -62,13 +63,23 @@ grid.addEventListener('dataChange', (e) => {
         <iconify-icon width="40" icon="mdi:language-html5"></iconify-icon>
         <h3>Imperative</h3>
       </header>
-      <Code theme="houston" code={`<div id="grid-container"></div>
+      <Code theme="houston" code={`<!-- Default: 5x5 grid -->
+<div id="grid-container"></div>
 
 <script type="module">
   import 'bit-grid-component'
   import BitGrid from 'bit-grid-component'
-  const grid = new BitGrid()
-  document.getElementById('grid-container').appendChild(grid)
+  
+  // Default grid (5x5 with auto-generated labels)
+  const defaultGrid = new BitGrid()
+  document.getElementById('grid-container').appendChild(defaultGrid)
+  
+  // Or create with custom options
+  const customGrid = new BitGrid({
+    rowLabels: ['Row 1', 'Row 2', 'Row 3'],
+    colLabels: ['Col 1', 'Col 2', 'Col 3', 'Col 4']
+  })
+  document.getElementById('grid-container').appendChild(customGrid)
 </script>`} lang="html" />
     </article>
 
@@ -78,6 +89,7 @@ grid.addEventListener('dataChange', (e) => {
         <h3>API</h3>
       </header>
       <Code theme="houston" code={`import 'bit-grid-component'
+import BitGrid from 'bit-grid-component'
 
 // Create and mount grid
 const grid = new BitGrid();
@@ -92,9 +104,6 @@ grid.update({
   rowLabels: ['Row 1', 'Row 2', ...],
   colLabels: ['Col 1', 'Col 2', ...]
 });
-
-// Reset to empty grid
-grid.reset();
 
 // Reset to empty grid
 grid.reset();`} lang="javascript" />
