@@ -1,6 +1,6 @@
 {
   "name": "bit-grid-component",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Framework-agnostic web component for boolean matrices - edit and display 2D boolean arrays with interactive cell selection",
   "type": "module",
   "main": "BitGrid.js",
