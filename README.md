@@ -169,19 +169,27 @@ grid.update({ data: newData, rowLabels: [...], colLabels: [...] });
 
 // Convenience methods
 grid.setLabels(['Row1', 'Row2'], ['Col1', 'Col2']);
-grid.setData(booleanArray);
-grid.setCell(row, col, true);
+grid.setData(booleanArray, silent);    // silent: skip dataChange event
+grid.setCell(row, col, true, silent);  // silent: skip dataChange event
 grid.getCell(row, col);
-grid.toggleCell(row, col);
-grid.fill(false); // Fill all cells with value
+grid.toggleCell(row, col, silent);     // silent: skip dataChange event
+grid.fill(false, silent);              // silent: skip dataChange event
 
 // Reset to empty grid
 grid.reset();
 ```
 
+The `silent` parameter (default: `false`) prevents `dataChange` events from firing. Useful for programmatic data loading without triggering change handlers.
+
 ### Events
 
 ```javascript
+// Fires when grid is fully initialized and ready
+grid.addEventListener('ready', () => {
+  console.log('Grid ready for interaction');
+});
+
+// Fires when user changes cell values
 grid.addEventListener('dataChange', (e) => {
   const data = e.detail; // 2D boolean array
   console.log('Grid data changed:', data);

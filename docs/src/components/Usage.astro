@@ -7,7 +7,7 @@ import { Code } from 'astro:components';
 
 <section class="usage-section">
   <h2>Usage</h2>
-  
+
   <div class="usage-grid">
     <article class="usage-item">
       <header>
@@ -19,10 +19,10 @@ import BitGrid from 'bit-grid-component'
 
 // Create grid with initial data and labels
 const grid = new BitGrid({
-  data: Array(7).fill(null).map(() => Array(24).fill(false)),
-  rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  colLabels: Array.from({length: 24}, (_, i) => \`\${i}:00\`),
-  onChange: (data) => console.log('Data changed:', data)
+    data: Array(7).fill(null).map(() => Array(24).fill(false)),
+    rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    colLabels: Array.from({length: 24}, (_, i) => \`\${i}:00\`),
+    onChange: (data) => console.log('Data changed:', data)
 });
 
 // IMPORTANT:
@@ -31,7 +31,7 @@ document.body.appendChild(grid);
 
 // Listen for changes
 grid.addEventListener('dataChange', (e) => {
-  console.log('Data changed:', e.detail);
+    console.log('Data changed:', e.detail);
 });`} lang="javascript" />
     </article>
 
@@ -46,14 +46,14 @@ grid.addEventListener('dataChange', (e) => {
 <script>
   const grid = document.querySelector('bit-grid');
   grid.update({
-    data: Array(31).fill(null).map(() => Array(24).fill(false)),
-    rowLabels: Array.from({length: 31}, (_, i) => 'Day ' + (i + 1)),
-    colLabels: Array.from({length: 24}, (_, i) => i + 'h')
+      data: Array(31).fill(null).map(() => Array(24).fill(false)),
+      rowLabels: Array.from({length: 31}, (_, i) => 'Day ' + (i + 1)),
+      colLabels: Array.from({length: 24}, (_, i) => i + 'h')
   });
 
   // Listen for changes
   grid.addEventListener('dataChange', (e) => {
-    console.log('Data changed:', e.detail);
+      console.log('Data changed:', e.detail);
   });
 </script>`} lang="html" />
     </article>
@@ -69,15 +69,15 @@ grid.addEventListener('dataChange', (e) => {
 <script type="module">
   import 'bit-grid-component'
   import BitGrid from 'bit-grid-component'
-  
+
   // Default grid (5x5 with auto-generated labels)
   const defaultGrid = new BitGrid()
   document.getElementById('grid-container').appendChild(defaultGrid)
-  
+
   // Or create with custom options
   const customGrid = new BitGrid({
-    rowLabels: ['Row 1', 'Row 2', 'Row 3'],
-    colLabels: ['Col 1', 'Col 2', 'Col 3', 'Col 4']
+      rowLabels: ['Row 1', 'Row 2', 'Row 3'],
+      colLabels: ['Col 1', 'Col 2', 'Col 3', 'Col 4']
   })
   document.getElementById('grid-container').appendChild(customGrid)
 </script>`} lang="html" />
@@ -91,22 +91,27 @@ grid.addEventListener('dataChange', (e) => {
       <Code theme="houston" code={`import 'bit-grid-component'
 import BitGrid from 'bit-grid-component'
 
-// Create and mount grid
-const grid = new BitGrid();
-document.getElementById('container').appendChild(grid);
+const grid = new BitGrid()
+document.getElementById('container').appendChild(grid)
 
-// Get grid data
-const data = grid.getData();
+// Wait for grid to be ready
+grid.addEventListener('ready', () => {
+    // Load data silently (no dataChange event)
+    grid.setCell(0, 0, true, true)  // silent = true
+    grid.setData(booleanArray, true)
+})
 
-// Update data and labels
-grid.update({
-  data: booleanArray,
-  rowLabels: ['Row 1', 'Row 2', ...],
-  colLabels: ['Col 1', 'Col 2', ...]
-});
+// Listen for user changes
+grid.addEventListener('dataChange', (e) => {
+    console.log('User changed:', e.detail)
+})
 
-// Reset to empty grid
-grid.reset();`} lang="javascript" />
+// Other methods
+grid.getData()
+grid.update({ data, rowLabels, colLabels })
+grid.toggleCell(row, col, silent)
+grid.fill(false, silent)
+grid.reset()`} lang="javascript" />
     </article>
 
     <article class="usage-item">
@@ -199,7 +204,7 @@ pre.astro-code {
   .usage-section {
     padding: 1em;
   }
-  
+
   .usage-item {
     padding: 1rem;
   }
